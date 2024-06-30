@@ -7,12 +7,14 @@ import com.aalmendaris.CarRegistry.service.CarRegistryService;
 import com.aalmendaris.CarRegistry.service.model.Car;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
-import static com.aalmendaris.CarRegistry.service.mappers.CarMapperEntity.carEntityToCar;
-import static com.aalmendaris.CarRegistry.service.mappers.CarMapperEntity.carToCarEntity;
+import static com.aalmendaris.CarRegistry.service.mappers.CarMapperEntity.*;
 
 @Service
 @Slf4j
@@ -85,6 +87,14 @@ public class CarRegistryServiceimpl implements CarRegistryService {
         }else {
             return carEntityToCar(foundCar.get());
         }
+    }
+
+    @Override
+    @Async
+    public CompletableFuture<List<Car>> allCarService() {
+        List<Car>allCar = carEntityToCarList(carRegistryRepository.findAll());
+
+        return CompletableFuture.completedFuture(allCar);
     }
 
 }

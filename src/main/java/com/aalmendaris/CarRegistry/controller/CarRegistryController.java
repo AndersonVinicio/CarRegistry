@@ -13,6 +13,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpServerErrorException;
 import java.util.NoSuchElementException;
+import java.util.concurrent.CompletableFuture;
 
 import static com.aalmendaris.CarRegistry.controller.mappers.BranDtoToBrandMapper.BrandDtoToBrand;
 import static com.aalmendaris.CarRegistry.controller.mappers.CarMapperDto.carTocarResponseDto;
@@ -26,6 +27,11 @@ public class CarRegistryController {
     @Autowired
     private BrandRegistryService brandRegistryService;
 
+
+    @GetMapping("/allCar")
+    public CompletableFuture<?> allCar(){
+        return carRegistryService.allCarService().thenApply(ResponseEntity::ok);
+    }
 
     @PostMapping("/addCar")
     public ResponseEntity<?> addCar(@RequestBody carRequest dtoCarRequest) {

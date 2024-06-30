@@ -4,6 +4,9 @@ import com.aalmendaris.CarRegistry.repository.entitys.BrandEntity;
 import com.aalmendaris.CarRegistry.repository.entitys.CarEntity;
 import com.aalmendaris.CarRegistry.service.model.Car;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CarMapperEntity {
     public static CarEntity carToCarEntity(Car car, BrandEntity brandEntity){
         return CarEntity.builder()
@@ -32,5 +35,25 @@ public class CarMapperEntity {
                 carEntity.getFuelType(),
                 carEntity.getNumDoors()
         );
+    }
+
+    public static List<Car> carEntityToCarList(List<CarEntity>carEntityList){
+        List<Car>carList = new ArrayList<>();
+        for (CarEntity carEntity : carEntityList){
+            Car car = new Car(
+                    carEntity.getId(),
+                    carEntity.getBrand().getName(),
+                    carEntity.getModel(),
+                    carEntity.getMilleage(),
+                    carEntity.getPrice(),
+                    carEntity.getYear(),
+                    carEntity.getDescription(),
+                    carEntity.getColour(),
+                    carEntity.getFuelType(),
+                    carEntity.getNumDoors()
+            );
+            carList.add(car);
+        }
+        return carList;
     }
 }
