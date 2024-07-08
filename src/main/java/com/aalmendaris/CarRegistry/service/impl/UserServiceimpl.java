@@ -1,21 +1,35 @@
 package com.aalmendaris.CarRegistry.service.impl;
 
-import com.aalmendaris.CarRegistry.controller.dtos.UserRequestDto;
 import com.aalmendaris.CarRegistry.repository.UserRepository;
+import com.aalmendaris.CarRegistry.repository.entitys.UserEntity;
 import com.aalmendaris.CarRegistry.service.UserService;
-import com.aalmendaris.CarRegistry.service.mappers.UserToUserEntityMapper;
 import com.aalmendaris.CarRegistry.service.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import static com.aalmendaris.CarRegistry.service.mappers.UserToUserEntityMapper.UserToUserEntity;
-
+@Service
 public class UserServiceimpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
 
+
+    public UserDetailsService userDetailsService(){
+        return new UserDetailsService(){
+            @Override
+            public UserDetails loadUserByUsername(String email) {
+                return userRepository.findByEmail(email)
+                        .orElseThrow(()->new UsernameNotFoundException("Usuario no encontrado"));
+            }
+        };
+    }
+
     @Override
-    public void singUp(User user) {
-        userRepository.save(UserToUserEntity(user));
+    public UserEntity singUp(UserEntity userEntity) {
+        return userRepository.save(userEntity);
     }
 }

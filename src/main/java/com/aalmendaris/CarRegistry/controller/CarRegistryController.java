@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpServerErrorException;
 import java.util.NoSuchElementException;
@@ -21,6 +22,7 @@ import static com.aalmendaris.CarRegistry.controller.mappers.CarMapperDto.dtoToC
 
 @RestController
 @Slf4j
+@RequestMapping("/Auth")
 public class CarRegistryController {
     @Autowired
     private CarRegistryService carRegistryService;
@@ -29,11 +31,14 @@ public class CarRegistryController {
 
 
     @GetMapping("/allCar")
+    @PreAuthorize("hasRole('ROLE_CLIENT')")
     public CompletableFuture<?> allCar(){
+        log.info("entra en allCar");
         return carRegistryService.allCarService().thenApply(ResponseEntity::ok);
     }
 
     @PostMapping("/addCar")
+    @PreAuthorize("hasRole('ROLE_VENDOR')")
     public ResponseEntity<?> addCar(@RequestBody carRequest dtoCarRequest) {
 
         try {
@@ -49,6 +54,7 @@ public class CarRegistryController {
     }
 
     @GetMapping("/foundCar")
+    @PreAuthorize("hasRole('ROLE_CLIENT')")
     public ResponseEntity<carResponse> foundCar(@RequestParam Integer id){
 
             try {
@@ -67,10 +73,14 @@ public class CarRegistryController {
     }
 
     @PutMapping("/updateCar")
+    @PreAuthorize("hasRole('ROLE_VENDOR')")
     public ResponseEntity<carResponse> updateCar(@RequestParam int id, @RequestBody carRequest car){
 
         try {
-            carResponse carResponse = carTocarResponseDto(carRegistryService.updateCarService(id,dtoToCarMapping(car))) ;
+
+            carResponse carResponse = carTocarResponseDto(carRegistryService.updateCarService(id,dtoToCarMapping(car)));
+            log.info("se mete al metodo updateCar");
+            log.info(String.valueOf(carResponse));
             return ResponseEntity.ok(carResponse);
         }catch (NoSuchElementException e){
             log.error("No se ha encontrado ningun Vehiculo para actualizar con el id {}", id);
@@ -83,6 +93,7 @@ public class CarRegistryController {
     }
 
     @DeleteMapping("/deleteVehiculo")
+    @PreAuthorize("hasRole('ROLE_VENDOR')")
     public ResponseEntity<?> DeleteCar(@RequestParam int id){
         try {
             return ResponseEntity.ok("Elemento eliminado \n"+carTocarResponseDto(carRegistryService.DeleteCarService(id)));
@@ -96,6 +107,7 @@ public class CarRegistryController {
     //BRAND
 
     @PostMapping("/addBrand")
+    @PreAuthorize("hasRole('ROLE_VENDOR')")
     public ResponseEntity<?> addBrand(@RequestBody brandRequestDTO brandRequest){
         try {
             brandRegistryService.addBrandService(BrandDtoToBrand(brandRequest));

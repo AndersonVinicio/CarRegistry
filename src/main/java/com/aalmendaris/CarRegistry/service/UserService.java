@@ -1,7 +1,8 @@
 package com.aalmendaris.CarRegistry.service;
 
+import com.aalmendaris.CarRegistry.repository.entitys.UserEntity;
 import com.aalmendaris.CarRegistry.service.model.User;
 
 public interface UserService {
-    void singUp(User user);
+    UserEntity singUp(UserEntity userEntity);
 }
