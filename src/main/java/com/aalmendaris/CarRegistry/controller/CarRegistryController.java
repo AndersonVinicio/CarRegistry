@@ -31,14 +31,14 @@ public class CarRegistryController {
 
 
     @GetMapping("/allCar")
-    @PreAuthorize("hasRole('ROLE_CLIENT')")
+    @PreAuthorize("hasRole('CLIENT')")
     public CompletableFuture<?> allCar(){
         log.info("entra en allCar");
         return carRegistryService.allCarService().thenApply(ResponseEntity::ok);
     }
 
     @PostMapping("/addCar")
-    @PreAuthorize("hasRole('ROLE_VENDOR')")
+    @PreAuthorize("hasRole('VENDOR')")
     public ResponseEntity<?> addCar(@RequestBody carRequest dtoCarRequest) {
 
         try {
@@ -54,7 +54,7 @@ public class CarRegistryController {
     }
 
     @GetMapping("/foundCar")
-    @PreAuthorize("hasRole('ROLE_CLIENT')")
+    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<carResponse> foundCar(@RequestParam Integer id){
 
             try {
@@ -73,7 +73,7 @@ public class CarRegistryController {
     }
 
     @PutMapping("/updateCar")
-    @PreAuthorize("hasRole('ROLE_VENDOR')")
+    @PreAuthorize("hasRole('VENDOR')")
     public ResponseEntity<carResponse> updateCar(@RequestParam int id, @RequestBody carRequest car){
 
         try {
@@ -93,7 +93,7 @@ public class CarRegistryController {
     }
 
     @DeleteMapping("/deleteVehiculo")
-    @PreAuthorize("hasRole('ROLE_VENDOR')")
+    @PreAuthorize("hasRole('VENDOR')")
     public ResponseEntity<?> DeleteCar(@RequestParam int id){
         try {
             return ResponseEntity.ok("Elemento eliminado \n"+carTocarResponseDto(carRegistryService.DeleteCarService(id)));
@@ -107,7 +107,7 @@ public class CarRegistryController {
     //BRAND
 
     @PostMapping("/addBrand")
-    @PreAuthorize("hasRole('ROLE_VENDOR')")
+    @PreAuthorize("hasRole('VENDOR')")
     public ResponseEntity<?> addBrand(@RequestBody brandRequestDTO brandRequest){
         try {
             brandRegistryService.addBrandService(BrandDtoToBrand(brandRequest));
