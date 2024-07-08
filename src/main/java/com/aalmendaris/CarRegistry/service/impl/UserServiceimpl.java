@@ -4,12 +4,14 @@ import com.aalmendaris.CarRegistry.repository.UserRepository;
 import com.aalmendaris.CarRegistry.repository.entitys.UserEntity;
 import com.aalmendaris.CarRegistry.service.UserService;
 import com.aalmendaris.CarRegistry.service.model.User;
+import com.aalmendaris.CarRegistry.service.model.UserLoginAndSignUp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import static com.aalmendaris.CarRegistry.service.mappers.UserLoginSignUpToUserEntityMapper.userLoginAndSignUpToUserEntity;
 import static com.aalmendaris.CarRegistry.service.mappers.UserToUserEntityMapper.UserToUserEntity;
 @Service
 public class UserServiceimpl implements UserService {
@@ -28,8 +30,9 @@ public class UserServiceimpl implements UserService {
         };
     }
 
+
     @Override
-    public UserEntity singUp(UserEntity userEntity) {
-        return userRepository.save(userEntity);
+    public UserEntity singUp(UserLoginAndSignUp userLoginAndSignUp, String passworEncoding, String role) {
+        return userRepository.save(userLoginAndSignUpToUserEntity(userLoginAndSignUp,passworEncoding,role));
     }
 }

@@ -5,6 +5,7 @@ import com.aalmendaris.CarRegistry.controller.dtos.LoginRequest;
 import com.aalmendaris.CarRegistry.controller.dtos.SingUpRequest;
 import com.aalmendaris.CarRegistry.repository.UserRepository;
 import com.aalmendaris.CarRegistry.repository.entitys.UserEntity;
+import com.aalmendaris.CarRegistry.service.model.UserLoginAndSignUp;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,42 +22,22 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public JwtResponse signup(SingUpRequest request) throws BadRequestException {
-        var user = UserEntity
-                .builder()
-                .name(request.getName())
-                .surname(request.getSurname())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role("ROLE_CLIENT")
-                .build();
-
-        user = userService.singUp(user);
-        var jwt = jwtService.generateToken(user);
-        return JwtResponse.builder().token(jwt).build();
+    public UserLoginAndSignUp signup(UserLoginAndSignUp request) throws BadRequestException {
+        var jwt = jwtService.generateToken(userService.singUp(request, passwordEncoder.encode(request.getPassword()),"ROLE_CLIENT"));
+        return UserLoginAndSignUp.builder().token(jwt).build();
     }
 
-    public JwtResponse sigUpVendor(SingUpRequest request) throws BadRequestException{
-        var user = UserEntity
-                .builder()
-                .name(request.getName())
-                .surname(request.getSurname())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role("ROLE_VENDOR")
-                .build();
-
-        user = userService.singUp(user);
-        var jwt = jwtService.generateToken(user);
-        return JwtResponse.builder().token(jwt).build();
+    public UserLoginAndSignUp sigUpVendor(UserLoginAndSignUp request) throws BadRequestException{
+        var jwt = jwtService.generateToken(userService.singUp(request, passwordEncoder.encode(request.getPassword()), "ROLE_VENDOR"));
+        return UserLoginAndSignUp.builder().token(jwt).build();
     }
 
-    public JwtResponse login(LoginRequest request) {
+    public UserLoginAndSignUp login(UserLoginAndSignUp request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new IllegalArgumentException("Invalid user or password"));
 
         var jwt = jwtService.generateToken(user);
-        return JwtResponse.builder().token(jwt).build();
+        return UserLoginAndSignUp.builder().token(jwt).build();
     }
 }

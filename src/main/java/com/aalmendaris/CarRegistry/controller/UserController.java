@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.aalmendaris.CarRegistry.controller.mappers.LoginSignUpToUserLoginSignUp.LoginRequestAndSignUpToUserLoginSignUp.*;
 import static com.aalmendaris.CarRegistry.controller.mappers.UsersToUsersDtoMapper.UserDtoToUser;
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +33,7 @@ public class UserController {
     public ResponseEntity<JwtResponse> addUser(@RequestBody SingUpRequest singUpRequest){
         try{
 
-            JwtResponse jwtResponse = authenticationService.signup(singUpRequest);
+            JwtResponse jwtResponse = returnToken(authenticationService.signup(userSignUpMapper(singUpRequest)));
             log.info(String.valueOf(jwtResponse));
             return ResponseEntity.ok(jwtResponse);
         }catch (Exception e){
@@ -44,7 +45,7 @@ public class UserController {
     public ResponseEntity<JwtResponse> addVendor(@RequestBody SingUpRequest singUpRequest){
         try{
 
-            JwtResponse jwtResponse = authenticationService.sigUpVendor(singUpRequest);
+            JwtResponse jwtResponse = returnToken(authenticationService.sigUpVendor(userSignUpMapper(singUpRequest)));
             log.info(String.valueOf(jwtResponse));
             return ResponseEntity.ok(jwtResponse);
         }catch (Exception e){
@@ -55,7 +56,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest loginRequest){
-        JwtResponse jwtResponse = authenticationService.login(loginRequest);
+        JwtResponse jwtResponse = returnToken(authenticationService.login(userLoginMapper(loginRequest)));
         log.info(String.valueOf(jwtResponse));
         return ResponseEntity.ok(jwtResponse);
     }
