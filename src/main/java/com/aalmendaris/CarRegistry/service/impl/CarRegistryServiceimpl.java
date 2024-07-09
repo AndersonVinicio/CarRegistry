@@ -93,7 +93,6 @@ public class CarRegistryServiceimpl implements CarRegistryService {
     @Async
     public CompletableFuture<List<Car>> allCarService() {
         List<Car>allCar = carEntityToCarList(carRegistryRepository.findAll());
-
         return CompletableFuture.completedFuture(allCar);
     }
 
