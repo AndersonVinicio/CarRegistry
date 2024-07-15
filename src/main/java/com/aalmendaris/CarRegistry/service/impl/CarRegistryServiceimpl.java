@@ -34,16 +34,6 @@ public class CarRegistryServiceimpl implements CarRegistryService {
         carRegistryRepository.save(carToCarEntity(car, brandRepository.findByName(car.getBrand())));
     }
 
-    /*@Override
-    public Car updateCarService(int id, Car car) {
-        return null;
-    }
-
-    @Override
-    public Boolean DeleteCarService(int id) {
-        return null;
-    }*/
-
     @Override
     public Car foundCarService(int id) {
         return carEntityToCar(carRegistryRepository.findById(id).get());
