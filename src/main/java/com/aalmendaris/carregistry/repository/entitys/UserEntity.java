@@ -33,6 +33,9 @@ public class UserEntity implements UserDetails {
     private String email;
     private String password;
     private String role;
+    @Lob
+    @Column(name = "img", columnDefinition = "MEDIUMBLOB", nullable = true)
+    private byte[] img;
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime created_at;

@@ -10,6 +10,9 @@ public class UserToUserEntityMapper {
                 .name(userEntity.getName())
                 .surname(userEntity.getSurname())
                 .email(userEntity.getEmail())
+                .password(userEntity.getPassword())
+                .role(userEntity.getRole())
+                .img(userEntity.getImg())
                 .build();
     }
     public static UserEntity UserToUserEntity (User user){
@@ -20,6 +23,7 @@ public class UserToUserEntityMapper {
                 .email(user.getEmail())
                 .password(user.getPassword())
                 .role(user.getRole())
+                .img(user.getImg())
                 .build();
     }
 }

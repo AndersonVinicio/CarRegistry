@@ -47,12 +47,11 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(autorize -> autorize
-                        .requestMatchers(HttpMethod.POST,"/login","/addUser","/addVendor").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/login","/addUser","/addVendor","/UploadImgUser").permitAll()
                         .requestMatchers(HttpMethod.GET,"/Auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST,"/Auth/**").permitAll()
                         .requestMatchers(HttpMethod.PUT,"/Auth/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE,"/Auth/**").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/Auth/Upload").permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider()).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

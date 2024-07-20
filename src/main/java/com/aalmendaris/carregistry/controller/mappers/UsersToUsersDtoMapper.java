@@ -16,4 +16,5 @@ public class UsersToUsersDtoMapper {
     public static UserResponseDto UserToUsersDto(User user){
         return new UserResponseDto(user.getId(), user.getName(), user.getSurname(), user.getEmail());
     }
+
 }
