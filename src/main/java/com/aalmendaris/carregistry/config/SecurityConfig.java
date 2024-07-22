@@ -45,13 +45,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(autorize -> autorize
-                        .requestMatchers(HttpMethod.POST,"/login","/addUser","/addVendor","/UploadImgUser").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/Auth/**").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/Auth/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT,"/Auth/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE,"/Auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/login", "/addUser", "/addVendor", "/UploadImgUser").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/addCarsCsv").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/Auth/**", "/downloaderImgUser/{id}", "/dataCars").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/Auth/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/Auth/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/Auth/**").permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider()).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
