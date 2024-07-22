@@ -73,7 +73,7 @@ public class FileController {
 
 
     @PostMapping(value = "/addCarsCsv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('VENDOR')")
+    //@PreAuthorize("hasRole('VENDOR')")
     public ResponseEntity<String>addCarCsv(@RequestPart(value = "file") MultipartFile multipartFile){
         if(multipartFile.isEmpty()){
            return ResponseEntity.badRequest().body("EL ARCHIVO ESTA VACIO ");

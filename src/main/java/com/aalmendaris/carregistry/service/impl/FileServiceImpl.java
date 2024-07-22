@@ -10,6 +10,8 @@ import com.aalmendaris.carregistry.service.mappers.CarMapperEntity;
 import com.aalmendaris.carregistry.service.mappers.UserToUserEntityMapper;
 import com.aalmendaris.carregistry.service.model.Car;
 import com.aalmendaris.carregistry.service.model.User;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
@@ -19,10 +21,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +34,7 @@ public class FileServiceImpl implements FileService {
     private final UserRepository userRepository;
     private final CarRegistryRepository carRegistryRepository;
     private final BrandRepository brandRepository;
-    
+
     @Override
     public String addImgUser(MultipartFile multipartFile, Integer id){
         Optional<UserEntity> foundUser = userRepository.findById(id);
@@ -108,6 +107,32 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public String addCarsCsv(MultipartFile multipartFile) {
+        try {
+            BufferedReader fileReader = new BufferedReader(new InputStreamReader(multipartFile.getInputStream(),"UTF-8"));
+            CsvToBean<Car> csvToBean = new CsvToBeanBuilder<Car>(fileReader)
+                    .withType(Car.class)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .build();
+            List<Car> Cars = csvToBean.parse();
+
+            List<CarEntity> newCarsEntityList = new ArrayList<>();
+            for (Car car : Cars){
+                newCarsEntityList.add(
+                        CarMapperEntity.carToCarEntity(
+                                car, brandRepository.findByName(car.getBrand())));
+            }
+
+            carRegistryRepository.saveAll(newCarsEntityList);
+
+            return "SE HAN AGREGADO CORRECTAMENTE LOS COCHES DEL FICHERO CSV";
+        }catch (Exception ex){
+            ex.printStackTrace();
+            return "No se ha podido agregar los coches desde el fichero csv";
+        }
+    }
+
+    /*@Override
+    public String addCarsCsv(MultipartFile multipartFile) {
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(multipartFile.getInputStream(),"UTF-8"));
              CSVParser csvParser = new CSVParser(fileReader,CSVFormat.DEFAULT.builder().setTrim(true).setIgnoreHeaderCase(true).setHeader().setSkipHeaderRecord(true).build())){
 
@@ -144,5 +169,5 @@ public class FileServiceImpl implements FileService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
+    }*/
 }
