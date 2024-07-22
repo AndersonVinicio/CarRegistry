@@ -41,7 +41,7 @@ public class FileController {
 
     @PreAuthorize("hasAnyRole('CLIENT','VENDOR')")
     @GetMapping(value = "/downloaderImgUser/{id}")
-    public ResponseEntity<?> downLoderImg(@PathVariable int id){
+    public ResponseEntity<byte[]> downLoderImg(@PathVariable int id){
         try{
             byte[]imgUser = fileService.downloadImgService(id);
             if(imgUser!=null && imgUser.length>0){
@@ -51,19 +51,19 @@ public class FileController {
                         .contentLength(imgUser.length)
                         .body(imgUser);
             }
-            return ResponseEntity.ok("el usuario no tien imagen");
+            return ResponseEntity.ok("el usuario no tien imagen".getBytes());
 
         }catch (UsernameNotFoundException e){
-            return ResponseEntity.badRequest().body("El usuario no existe");
+            return ResponseEntity.badRequest().body("El usuario no existe".getBytes());
         }catch (Exception e){
             log.error("erro {}",e.getMessage());
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage().getBytes());
         }
     }
 
     @GetMapping("/dataCars")
     @PreAuthorize("hasAnyRole('CLIENT','VENDOR')")
-    public ResponseEntity<?>downloadCarsCsv(){
+    public ResponseEntity<byte[]>downloadCarsCsv(){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentDispositionFormData("attachment", "cars.csv");
@@ -78,9 +78,15 @@ public class FileController {
         if(multipartFile.isEmpty()){
            return ResponseEntity.badRequest().body("EL ARCHIVO ESTA VACIO ");
         }
-        if (multipartFile.getOriginalFilename().contains(".csv")){
-            return ResponseEntity.ok(fileService.addCarsCsv(multipartFile));
+        try{
+            String filname = multipartFile.getOriginalFilename();
+            if(filname !=null && filname.contains(".csv")){
+                return ResponseEntity.ok(fileService.addCarsCsv(multipartFile));
+            }
+        }catch (NullPointerException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
+
         return ResponseEntity.badRequest().body("EL ARCHIVO NO ES UN CSV");
 
     }
